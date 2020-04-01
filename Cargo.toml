@@ -9,3 +9,9 @@ edition = "2018"
 [dependencies]
 rocket = "0.4.4"
 postgres = "0.17.2"
+r2d2_postgres = "0.16.0"
+r2d2 = "0.8.8"
+rocket_contrib = "0.4.4"
+serde = { version = "1.0.105", features = ["derive"] }
+serde_json = { version = "1.0.50", default-features = false, features = ["alloc"] }
+serde_derive = "1.0.105"
