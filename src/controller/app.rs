@@ -1,10 +1,7 @@
-use std::io::Cursor;
-
 use rocket::{Response, State};
 use rocket::http::ContentType;
 use rocket::http::Status;
-use rocket::response::Body;
-use rocket_contrib::json::{Json, JsonValue};
+use rocket_contrib::json::Json;
 
 use crate::dao::app_dao::AppDao;
 use crate::model::request::AppRequest;
