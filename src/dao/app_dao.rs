@@ -1,6 +1,6 @@
-use postgres::{NoTls};
-use r2d2_postgres::{PostgresConnectionManager, r2d2};
+use postgres::NoTls;
 use r2d2::Pool;
+use r2d2_postgres::{PostgresConnectionManager, r2d2};
 
 pub struct AppDao{
     pool: Pool<PostgresConnectionManager<NoTls>>
@@ -12,11 +12,11 @@ impl AppDao {
     }
 
     pub fn exists(&self, name: String) -> bool{
-        return match self.pool.clone().get().unwrap().query("select count() from app where name = $1;", &[&name]) {
+        return match self.pool.clone().get().unwrap().query("select count(*) from app where name = $1;", &[&name]) {
             Ok(rows) => {
                 match rows.first() {
                     Some(row) => {
-                        let count: i32 = row.get(0);
+                        let count: i64 = row.get(0);
                         if count > 0 {
                             true
                         } else {

@@ -1,17 +1,32 @@
-use rocket::State;
-use rocket_contrib::json::{JsonValue, Json};
-use crate::model::request::AppRequest;
+use std::io::Cursor;
+
+use rocket::{Response, State};
+use rocket::http::ContentType;
+use rocket::http::Status;
+use rocket::response::Body;
+use rocket_contrib::json::{Json, JsonValue};
+
 use crate::dao::app_dao::AppDao;
+use crate::model::request::AppRequest;
+use crate::model::response::AppResponse;
 
 #[post("/register_app", format = "json", data = "<request>")]
-pub fn create(dao: State<AppDao>, request: Json<AppRequest>) -> JsonValue {
-    if dao.exists(request.0.name.clone()) {
-        return json!({ "status": "NOK" });
+pub fn create(dao: State<AppDao>, request: Json<AppRequest>) -> Result<Json<AppResponse>, Response> {
+    if dao.exists(request.name.clone()) {
+        return Err(Response::build()
+            .status(Status::Conflict)
+            .header(ContentType::JSON)
+            .finalize());
     }
-    return match dao.create(request.0.name.clone()) {
-        None => { json!({ "status": "NOK" }) }
+    return match dao.create(request.name.clone()) {
+        None => {
+            Err(Response::build()
+                .status(Status::InternalServerError)
+                .header(ContentType::JSON)
+                .finalize())
+        }
         Some(id) => {
-            json!({ "status":id.as_str()})
+            Ok(Json(AppResponse { id }))
         }
     };
 }
